@@ -3,8 +3,12 @@ const router = express.Router();
 const userController = require("../controllers/user");
 const validator = require("express-validator");
 const User = require("../models/user");
+const ControllerUser = require("../controllers/controller.user");
 
 // router.get("/:userId/get-trans", userController.handleUserGetTrans);
+
+// Admin get all user
+router.get("/", ControllerUser.getAllUser);
 
 router.post(
   "/login",
