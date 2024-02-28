@@ -20,10 +20,6 @@ class ControllerCart {
         let userInfor = await ServiceUser.getUserById(user);
 
         let {status, message} = await ServiceCart.addCart(userInfor, productInfor);
-        // if(!status) {
-        //     return res.status(400).json({status: false, message});
-        // }
-        // return res.status(200).json({status: true, message});
         next();
     }
 
