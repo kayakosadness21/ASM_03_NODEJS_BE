@@ -56,16 +56,38 @@ class ControllerUser {
             return res.status(statusCode).json({status: false, message: error.array()[0].msg});
         }
 
-        let user = await ServiceUser.createUser({
+        let {status} = await ServiceUser.createUser({
             fullName, email,
             password: UtilBcrypt.hash(password),
             phoneNumber, address
         })
 
-        if(!user) {
+        if(!status) {
             return res.status(400).json({status: false, message: "User new unsuccesss"});
         }
         return res.status(200).json({status: true, message: "User new successs"});
+    }
+
+    async destroyUserAccount(req, res, next) {
+        const { id } = req.body;
+        const error = validator.validationResult(req);
+
+        if (!error.isEmpty()) {
+            let statusCode = 400;
+            switch(error.array()[0].msg) {
+                case "Token user can\'t empty":
+                default:
+                    statusCode = 400;
+                    break
+            }
+            return res.status(statusCode).json({status: false, message: error.array()[0].msg});
+        }
+        let { status } = await ServiceUser.destroyUser(id);
+        if(!status) {
+            return res.status(400).json({status: false, message: "User destroy unsuccesss"});
+        }
+        return res.status(200).json({status: true, message: "User destroy successs"});
+
     }
 }
 

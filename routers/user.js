@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user");
 const validator = require("express-validator");
+const { body } = require("express-validator");
 const User = require("../models/user");
 const ControllerUser = require("../controllers/controller.user");
 
@@ -66,7 +67,7 @@ router.post(
 );
 
 
-// User from Admin
+// Create user from Admin
 router.post("/new",
   [
     validator
@@ -105,7 +106,15 @@ router.post("/new",
       .isMobilePhone()
       .withMessage("Your input is not type of phone number"),
   ],
-  ControllerUser.newUserAccount
-)
+  ControllerUser.newUserAccount);
+
+// Destroy user from admin
+router.post("/destroy", [
+    body('id').custom( async (val, {req}) => {
+        if(!val.trim()) throw Error('Token user can\'t empty');
+        return true;
+    })
+  ],
+  ControllerUser.destroyUserAccount);
 
 module.exports = router;
