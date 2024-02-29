@@ -26,6 +26,10 @@ class ControllerRole {
         if (!error.isEmpty()) {
             let statusCode = 400;
             switch(error.array()[0].msg) {
+                case "Role is existed, please try again":
+                    statusCode = 421;
+                    break
+
                 case "Enter name role atleast 5 characters and max 20 characters":
                 default:
                     statusCode = 423;
