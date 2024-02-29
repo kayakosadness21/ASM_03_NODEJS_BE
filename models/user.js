@@ -22,6 +22,7 @@ const userSchema = Schema({
   },
   isAdmin: {
     type: Boolean,
+    default: false
   },
   isCounselor: {
     type: Boolean,
@@ -37,6 +38,8 @@ const userSchema = Schema({
     type: Schema.Types.ObjectId,
     ref: "roles"
   }
+}, {
+  timestamps: true
 });
 
 module.exports = mongoose.model("User", userSchema);
