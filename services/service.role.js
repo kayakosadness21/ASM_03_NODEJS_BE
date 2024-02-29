@@ -16,9 +16,11 @@ class ServiceRole {
     }
 
     // Get role by ID
-    async getRoleByName(id="") {
+    async getRoleByName(name="") {
         try {
-            return await ModelRole.findOne({_id: {$eq: id}});
+            let role = await ModelRole.findOne({title: {$eq: name}});
+            return {status: role? true : false, role};
+
         } catch (err) {
             return {status: false, message: err.message};
         }
