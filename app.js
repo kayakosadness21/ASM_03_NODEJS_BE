@@ -26,6 +26,7 @@ const Chat = require("./models/chat");
 const { ObjectId } = require("mongodb");
 // const { Socket } = require("socket.io");
 const routerCart = require("./routers/router.cart");
+const roleRouter = require("./routers/router.role");
 
 const PORT = process.env.PORT;
 const URL = process.env.MONGO_URI;
@@ -42,6 +43,7 @@ app.use(express.static(path.join(__dirname, "./public")));
 // Assign routers
 app.use(verifyRouter);
 app.use("/order", orderRouter);
+app.use("/role", roleRouter);
 app.use("/user", userRouter);
 app.use("/product", productRouter);
 app.use("/chat", chatRouter);
