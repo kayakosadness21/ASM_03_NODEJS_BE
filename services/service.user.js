@@ -1,5 +1,6 @@
 "use strict"
 const ModelUser = require("../models/user");
+const ServiceRole = require("./service.role");
 
 class ServiceUser {
 
@@ -9,7 +10,10 @@ class ServiceUser {
     // Get All User
     async getAllUser() {
         try {
-            return await ModelUser.find().lean();
+            return await ModelUser
+            .find()
+            .populate(["role"])
+            .lean();
         } catch (err) {
             return {status: false, message: err.message};
         }
@@ -28,14 +32,22 @@ class ServiceUser {
     // Create user account
     async createUser(infor = {}) {
         try {
-            await ModelUser.create({
+            let {status, role} = await ServiceRole.findRoleById(infor.role);
+            if(!status) {
+                return {status: false, message: "Create user unsuccess"};
+            }
+
+            let user = await ModelUser.create({
                 fullName: infor.fullName,
                 email: infor.email,
                 password: infor.password,
                 phoneNumber: infor.phoneNumber,
-                address: infor.address
+                address: infor.address,
+                role
             })
 
+            role.users.push(user);
+            await role.save();
             return {status: true, message: "Create user success"};
 
         } catch (err) {
