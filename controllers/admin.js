@@ -1,66 +1,56 @@
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const ServiceUser = require("../services/service.user");
+const UtilBcrypt = require("../utils/util.bcrypt");
 
-const handleAdminLogin = (req, res, next) => {
+const handleAdminLogin = async(req, res, next) => {
   try {
     const { email, password } = req.body;
     // Validate user input
     if (!(email && password)) {
       res.status(400).send("All input is required");
     }
-    User.findOne({ email: email })
-      .then(async (user) => {
-        // check user & pass
-        if (!user) {
-          res.status(420).json({
-            message: "User is not existed",
-          });
-          return;
-        }
-        // check user/account authentiation
-        // console.log("CHECCK out side User: ", user);
-        if (!user.isAdmin && !user.isCounselor) {
-          // console.log("CHECCK in side User: ", user);
-          res.status(404).json({ message: "This account is invalid" });
-          return;
-        }
 
-        const isMatchPass = await bcrypt.compare(password, user.password);
-        if (!isMatchPass) {
-          res.status(421).json({
-            message: "Wrong password",
-          });
-          return;
-        }
+    let { status, user } = await ServiceUser.findUserByEmail(email);
 
-        // Create token
-        const token = jwt.sign(
-          {
-            userId: user._id,
-            email: user.email,
-          },
-          process.env.TOKEN_KEY, // mysecret, it should be make by romdom function
-          { expiresIn: process.env.EXPIRES_IN }
-        );
-        user.token = token;
-        user.save();
-        res.status(200).json({
-          message: "ok",
-          user: {
-            userId: user._id,
-            fullName: user.fullName,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            address: user.address,
-            token: user.token,
-            isAdmin: user.isAdmin,
-          },
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if(!status) {
+        return res.status(420).json({message: "User is not existed"});
+    }
+
+    if(user.role.title !== 'Admin' && user.role.title !== 'Counselor') {
+      return res.status(404).json({ message: "This account is invalid" });
+    }
+
+    let isPassword = UtilBcrypt.compare(password, user.password);
+    if(!isPassword) {
+      return res.status(421).json({message: "Wrong password"});
+    }
+
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+      },
+      process.env.TOKEN_KEY,
+      { expiresIn: process.env.EXPIRES_IN }
+    );
+
+    user.token = token;
+    user.save();
+    return res.status(200).json({
+      message: "ok",
+      user: {
+        userId: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        address: user.address,
+        token: user.token,
+        isAdmin: user.isAdmin,
+      },
+    });
+
   } catch (error) {
     console.log("CHECK Error: ", error);
     res.status(500).json({

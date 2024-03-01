@@ -42,6 +42,20 @@ class ServiceUser {
         }
     }
 
+    // Find user by Email
+    async findUserByEmail(email="") {
+        try {
+            let user = await ModelUser
+            .findOne({email: {$eq: email}})
+            .populate(['role']);
+
+            return {status: true, user};
+
+        } catch (err) {
+            return {status: false, message: err.message};
+        }
+    }
+
 
     // Create user account
     async createUser(infor = {}) {
