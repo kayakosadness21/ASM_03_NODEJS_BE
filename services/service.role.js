@@ -40,6 +40,17 @@ class ServiceRole {
             return {status: false, message: err.message};
         }
     }
+
+    // Destroy role account
+    async destroyRole(id="") {
+        try {
+            await ModelRole.deleteOne({_id: {$eq: id}});
+            return {status: true, message: "Destroy role success"};
+
+        } catch (err) {
+            return {status: false, message: err.message};
+        }
+    }
 }
 
 module.exports = new ServiceRole();
