@@ -23,4 +23,22 @@ router.post("/new",
   ],
   ControllerRole.newRole);
 
+
+router.post("/destroy",
+  [
+    validator
+      .check("id")
+      .not()
+      .isEmpty()
+      .withMessage("ID role can't empty")
+      .custom(async (value, { req }) => {
+        let { status, role } = await ServiceRole.getRoleByName(value)
+        if (status && role.users.length) {
+          throw new Error("Role has associated can't destroy");
+        }
+        return true;
+      }),
+  ],
+  ControllerRole.destroyRole)
+
 module.exports = router;

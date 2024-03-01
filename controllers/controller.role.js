@@ -45,6 +45,32 @@ class ControllerRole {
         }
         return res.status(200).json({status: true, message: "Role new successs"});
     }
+
+    async destroyRole(req, res, next) {
+        let { id } = req.body;
+        const error = validator.validationResult(req);
+
+        if (!error.isEmpty()) {
+            let statusCode = 400;
+            switch(error.array()[0].msg) {
+                case "ID role can't empty":
+                    statusCode = 400;
+                    break
+
+                case "Role has associated can't destroy":
+                default:
+                    statusCode = 403;
+                    break
+            }
+            return res.status(statusCode).json({status: false, message: error.array()[0].msg});
+        }
+
+        let { status } = await ServiceRole.destroyRole(id);
+        if(!status) {
+            return res.status(400).json({status: false, message: "Role destroy unsuccesss"});
+        }
+        return res.status(200).json({status: true, message: "Role destroy successs"});
+    }
 }
 
 module.exports = new ControllerRole();
