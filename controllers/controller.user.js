@@ -19,7 +19,7 @@ class ControllerUser {
 
     async newUserAccount(req, res, next) {
         const error = validator.validationResult(req);
-        const { fullName, email, password, phoneNumber, address } = req.body;
+        const { fullName, email, password, phoneNumber, address, role } = req.body;
 
         // Validate user input
         if (!(fullName || email || password || phoneNumber)) {
@@ -59,7 +59,8 @@ class ControllerUser {
         let {status} = await ServiceUser.createUser({
             fullName, email,
             password: UtilBcrypt.hash(password),
-            phoneNumber, address
+            phoneNumber, address,
+            role
         })
 
         if(!status) {
