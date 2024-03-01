@@ -125,7 +125,15 @@ class ServiceUser {
     // Delete user account
     async destroyUser(id="") {
         try {
-            await ModelUser.deleteOne({_id: {$eq: id}});
+            let { status, user } = await this.findUserById(id);
+
+            if(!status) {
+                return {status: false, message: "Destroy user unsuccess"};
+            }
+
+            user.role.users = user.role.users.filter((userRole) => userRole._id.toString() !== id);
+            await user.role.save();
+            await user.deleteOne();
             return {status: true, message: "Destroy user success"};
 
         } catch (err) {

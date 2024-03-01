@@ -85,7 +85,11 @@ class ServiceRole {
     // Destroy role account
     async destroyRole(id="") {
         try {
-            await ModelRole.deleteOne({_id: {$eq: id}});
+            let { status, role } = await this.findRoleById(id);
+            if(!status || role.users.length) {
+                return {status: true, message: "Destroy role unsuccess"};
+            }
+            await role.deleteOne();
             return {status: true, message: "Destroy role success"};
 
         } catch (err) {
