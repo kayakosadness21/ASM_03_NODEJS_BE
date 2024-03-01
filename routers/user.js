@@ -8,7 +8,7 @@ const ControllerUser = require("../controllers/controller.user");
 
 // router.get("/:userId/get-trans", userController.handleUserGetTrans);
 
-// Admin get all user
+router.get("/:id", ControllerUser.getUserById);
 router.get("/", ControllerUser.getAllUser);
 
 router.post(
@@ -107,6 +107,32 @@ router.post("/new",
       .withMessage("Your input is not type of phone number"),
   ],
   ControllerUser.newUserAccount);
+
+
+// Create user from Admin
+router.post("/update",
+  [
+    validator
+      .check("fullName")
+      .isLength({ min: 5, max: 20 })
+      .withMessage("Enter fullName atleast 5 characters and max 20 characters"),
+      
+    validator
+      .check("email")
+      .isEmail()
+      .withMessage("Enter email is invalid, try again")
+      .not()
+      .isEmpty()
+      .withMessage("E-mail not empty"),
+
+    validator
+      .check("phoneNumber")
+      .isLength({ min: 9, max: 12 })
+      .withMessage("Length of phone number from 9 - 12. and is number")
+      .isMobilePhone()
+      .withMessage("Your input is not type of phone number"),
+  ],
+  ControllerUser.updateUserAccount);
 
 // Destroy user from admin
 router.post("/destroy", [

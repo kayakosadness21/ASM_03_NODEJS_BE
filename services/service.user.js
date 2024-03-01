@@ -22,7 +22,21 @@ class ServiceUser {
     // Get user by ID
     async getUserById(id="") {
         try {
-            return await ModelUser.findOne({_id: {$eq: id}});
+            return await ModelUser.findOne({_id: {$eq: id}}).lean();
+        } catch (err) {
+            return {status: false, message: err.message};
+        }
+    }
+
+    // Find user by ID
+    async findUserById(id="") {
+        try {
+            let user = await ModelUser
+            .findOne({_id: {$eq: id}})
+            .populate(['role']);
+
+            return {status: true, user};
+
         } catch (err) {
             return {status: false, message: err.message};
         }
@@ -48,6 +62,45 @@ class ServiceUser {
 
             role.users.push(user);
             await role.save();
+            return {status: true, message: "Create user success"};
+
+        } catch (err) {
+            return {status: false, message: err.message};
+        }
+    }
+
+    // Update user account
+    async updateUser(infor = {}) {
+        try {
+            let {status: roleStatus, role} = await ServiceRole.findRoleById(infor.role);
+            let { status: userStatus, user } = await this.findUserById(infor.id);
+
+            if(!roleStatus || !userStatus) {
+                return {status: false, message: "Create user unsuccess"};
+            }
+
+            if(user.role && (role._id.toString() !== user.role._id.toString())) {
+                user.role.users = user.role.users.filter((userRole) => userRole._id.toString() !== infor.id);
+                await user.role.save();
+
+                user.role = role;
+                role.users.push(user);
+                await role.save();
+            }
+
+            if(!user.role) {
+                user.role = role;
+                role.users.push(user);
+                await role.save();
+            }
+
+            user.fullName = infor.fullName;
+            user.email = infor.email;
+            user.phoneNumber = infor.phoneNumber;
+            user.address = infor.address;
+
+            await user.save();
+
             return {status: true, message: "Create user success"};
 
         } catch (err) {
