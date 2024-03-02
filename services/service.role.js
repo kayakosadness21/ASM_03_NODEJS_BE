@@ -50,6 +50,16 @@ class ServiceRole {
         }
     }
 
+    async findRoleByName(name="") {
+        try {
+            let role = await ModelRole.findOne({title: {$eq: name}});
+            return {status: role? true : false, role};
+
+        } catch (err) {
+            return {status: false, message: err.message};
+        }
+    }
+
 
     // Create role account
     async createRole(infor = {}) {
