@@ -13,7 +13,7 @@ router.get("/:id", ControllerProduct.getProductById);
 router.get("/get-all-products", productController.getAllProducts);
 router.get("/", ControllerProduct.getAllProduct);
 
-router.delete("/delete-product", auth, productController.deleteProducts);
+router.post("/destroy", auth, ControllerProduct.destroyProduct);
 router.post("/update", auth, ControllerProduct.updateProduct);
 router.post("/new", auth,
   // (req, res, next) => {

@@ -1,5 +1,6 @@
 "use strict"
 const ModelProduct = require("../models/product");
+const UtilCloudinary = require("../utils/util.cloudinary");
 
 class ServiceProduct {
 
@@ -74,6 +75,34 @@ class ServiceProduct {
 
         } catch (err) {
             return {status: false, message: "Update product unsuccess"};
+        }
+    }
+
+    async destroyProduct(infor = {}) {
+        try {
+            let product = await this.findProductById(infor.id);
+
+            if(product.images.length && product.images.every((image) => image.includes("cloudinary"))) {
+
+                for(let image of product.images) {
+                    let imageName = image.split('/').splice(-1).join('').split(".")[0];
+                    let {status, result } = await UtilCloudinary.exists(`${process.env.CLOUDINARY_DIRECTORY}/${imageName}`);
+                    if(status) {
+                        await UtilCloudinary.destroy(`${process.env.CLOUDINARY_DIRECTORY}/${imageName}`);
+                        break;
+                    }
+                }
+            }
+
+            await product.deleteOne();
+
+            if(!product) {
+                return { status: false, message: "Product destroy unsuccess"};
+            }
+            return { status: true, message: "Product destroy success"};
+
+        } catch (err) {
+            return {status: false, message: err.message};
         }
     }
 }

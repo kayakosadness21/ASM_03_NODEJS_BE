@@ -42,6 +42,22 @@ class ControllerProduct {
             return res.status(400).json({status: false, message: "Update product unsuccess"});
         }
     }
+
+    async destroyProduct(req, res, next) {
+        try {
+            const { id } = req.body;
+            let { status, message } = await ServiceProduct.destroyProduct({id})
+
+            if(!status) {
+                return res.status(400).json({status, message});
+            }
+
+            return res.status(200).json({status, message});
+
+        } catch (err) {
+            return res.status(400).json({status: false, message: "Update product unsuccess"});
+        }
+    }
 }
 
 module.exports = new ControllerProduct();
