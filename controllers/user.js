@@ -2,6 +2,8 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const validator = require("express-validator");
+const ServiceRole = require("../services/service.role");
+
 // Tiêu chí số 3: Chức năng xác thực tài khoản (client)
 const handleUserLogin = (req, res, next) => {
   try {
@@ -128,6 +130,8 @@ const handleUserSignUp = async (req, res, next) => {
     }
     // Mã hóa mk bằng chuỗi: Encrypt user password
     encryptedPassword = await bcrypt.hash(password, 10);
+
+    let { role } = await ServiceRole.findRoleByName('Client');
     // create user
     const user = new User({
       email: email,
@@ -138,12 +142,14 @@ const handleUserSignUp = async (req, res, next) => {
       isAdmin: false,
       isCounselor: false,
       token: null,
+      role
     });
     user.save();
-    res.status(200).json({
-      message: "ok",
-      exist: false,
-    });
+
+    role.users.push(user);
+    await role.save();
+
+    res.status(200).json({message: "ok", exist: false,});
   } catch (error) {
     console.log("check: ", error);
     res.status(500).json({
