@@ -18,10 +18,18 @@ class ServiceProduct {
 
     async getProductById(id="") {
         try {
-            return await ModelProduct.findOne({_id: {$eq: id}});
+            return await ModelProduct.findOne({_id: {$eq: id}}).lean();
 
         } catch (err) {
             return {status: false, message: err.message};
+        }
+    }
+
+    async findProductById(id="") {
+        try {
+            return await ModelProduct.findById(id);
+        } catch (err) {
+            return null;
         }
     }
 
@@ -44,6 +52,28 @@ class ServiceProduct {
 
         } catch (err) {
             return {status: false, message: err.message};
+        }
+    }
+
+    async updateProduct(infor = {}) {
+        try {
+            let product = await this.findProductById(infor.id);
+
+            if(!product) {
+                return {status: false, message: "Update product unsuccess"};
+            }
+
+            product.name = infor.name;
+            product.category = infor.category;
+            product.long_desc = infor.long_desc;
+            product.short_desc = infor.short_desc;
+            product.price = infor.price;
+            product.quantity = infor.quantity;
+            await product.save();
+            return {status: true, message: "Update product success"};
+
+        } catch (err) {
+            return {status: false, message: "Update product unsuccess"};
         }
     }
 }

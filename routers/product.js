@@ -9,11 +9,12 @@ const uploadMultipleImageFiles = require("../utils/uploadImages");
 // const Product = require("../models/product");
 const ControllerProduct = require("../controllers/controller.product");
 
+router.get("/:id", ControllerProduct.getProductById);
 router.get("/get-all-products", productController.getAllProducts);
 router.get("/", ControllerProduct.getAllProduct);
 
 router.delete("/delete-product", auth, productController.deleteProducts);
-router.post("/update-product", auth, productController.updateProduct);
+router.post("/update", auth, ControllerProduct.updateProduct);
 router.post("/new", auth,
   // (req, res, next) => {
   //   uploadMultipleImageFiles(req, res, (err) => {
