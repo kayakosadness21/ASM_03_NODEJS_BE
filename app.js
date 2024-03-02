@@ -3,16 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-// const product = new Product({
-//   category: "iphone",
-//   long_desc: "Tính năng nổi bật",
-//   name: "Apple iPhone 13 Pro Max - Alpine Green",
-//   price: 29390000,
-//   short_desc:
-//     "iPhone 13 Pro Max. Một nâng cấp hệ thống camera chuyên nghiệp hoành tr…",
-//   quantity: 80,
-// });
-// product.save();
+const multer = require("multer");
 
 // Declare routers
 const userRouter = require("./routers/user");
@@ -23,14 +14,12 @@ const chatRouter = require("./routers/chat");
 const verifyRouter = require("./routers/verifyExpire");
 const path = require("path");
 const Chat = require("./models/chat");
-const { ObjectId } = require("mongodb");
-// const { Socket } = require("socket.io");
 const routerCart = require("./routers/router.cart");
 const roleRouter = require("./routers/router.role");
+const cloudinary = require("./utils/util.cloudinary");
 
 const PORT = process.env.PORT;
 const URL = process.env.MONGO_URI;
-console.log(URL)
 
 // create app
 const app = express();
@@ -40,6 +29,9 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
 app.use(express.static(path.join(__dirname, "./public")));
+
+app.use(multer({storage:cloudinary.storage}).any('photos'));
+
 // Assign routers
 app.use(verifyRouter);
 app.use("/order", orderRouter);

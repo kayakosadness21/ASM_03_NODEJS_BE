@@ -1,7 +1,9 @@
+"use strict"
 const Product = require("../models/product");
 const User = require("../models/user");
 const Order = require("../models/order");
 const { ObjectId } = require("mongodb");
+const ServiceProduct = require("../services/service.product");
 
 //=========> GET ALL PRODUCT
 const getAllProducts = async (req, res, next) => {
@@ -86,46 +88,67 @@ const updateProduct = async (req, res, next) => {
     });
   }
 };
+
 //=========> CREATE NEW PRODUCT
 const addNewProduct = async (req, res, next) => {
   // console.log("req.files: ", req.files); // that is array file with path:'D:\\Fullstack\\Funix\\Bai 4 Nodesj\\Asm3\\BE\\public\\images\\multiple_images-1685714203550.png'
   try {
-    const { userId, category, long_desc, name, short_desc, price, quantity } =
-      req.body;
+    let { files } = req;
+    const { userId, category, long_desc, name, short_desc, price, quantity } = req.body;
 
-    // check input body
+    // // check input body
     if (!req.body || !req.files) {
       res.status(400).json({ message: "Product id & file image are required" });
       return;
     }
-    // Check user & user's authorization
-    const user = await User.findById(userId);
-    if (!user) {
-      res.status(404).json({ message: "not found user" });
-      return;
-    } else {
-      if (!user.isAdmin) {
-        res
-          .status(400)
-          .json({ message: "your account do not allow adding new products" });
-      }
+
+    let images = [];
+    if(files.length) {
+        images = files.map((image) => {
+            return image.path? image.path : '';
+        })
     }
-    // get image's path local server
-    const imagesPath = req.files.map((file) => {
-      return `/images/${file.filename}`;
-    });
-    // create product & save to database
-    const product = new Product({
-      category: category,
-      name: name,
-      long_desc: long_desc,
-      short_desc: short_desc,
-      price: price,
-      quantity: quantity,
-      images: imagesPath,
-    });
-    await product.save();
-    res.status(200).json({ message: "ok" });
+
+    let { status, message } = await ServiceProduct.newProduct({
+      category, long_desc, name,
+      short_desc, price, quantity, images
+    })
+
+    if(!status) {
+      return res.status(400).json({status: false, message});
+    }
+
+    return res.status(200).json({status: true, message});
+
+    // // Check user & user's authorization
+    // const user = await User.findById(userId);
+    // if (!user) {
+    //   res.status(404).json({ message: "not found user" });
+    //   return;
+    // } else {
+    //   if (!user.isAdmin) {
+    //     res
+    //       .status(400)
+    //       .json({ message: "your account do not allow adding new products" });
+    //   }
+    // }
+    // // get image's path local server
+    // const imagesPath = req.files.map((file) => {
+    //   return `/images/${file.filename}`;
+    // });
+    // // create product & save to database
+    // const product = new Product({
+    //   category: category,
+    //   name: name,
+    //   long_desc: long_desc,
+    //   short_desc: short_desc,
+    //   price: price,
+    //   quantity: quantity,
+    //   images: imagesPath,
+    // });
+    // await product.save();
+    // res.status(200).json({ message: "ok" });
+
   } catch (error) {
     console.log("server error: ", error);
     res.status(500).json({
@@ -133,6 +156,7 @@ const addNewProduct = async (req, res, next) => {
     });
   }
 };
+
 module.exports = {
   getAllProducts,
   deleteProducts,
