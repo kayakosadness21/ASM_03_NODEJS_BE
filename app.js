@@ -55,7 +55,7 @@ mongoose.connect(URL).then(() => {
     console.log("client connected under socketId: ", socket.id);
 
     // ADMIN
-    await ControllerSocket.adminOnline(socket);
+    await ControllerSocket.adminOnline(socket, io);
     await ControllerSocket.adminOffline(socket);
 
     // Listen DISCONNECT from client

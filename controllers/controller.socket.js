@@ -6,11 +6,11 @@ class ControllerSocket {
     constructor() { }
 
 
-    async adminOnline(socket) {
+    async adminOnline(socket, io) {
         socket.on('ADMIN-SIGNIN', async(data) => {
             let { id, email } = data;
             let list = await ServiceCustomerCare.activeUser({userId: id, userEmail: email, socketId: socket.id})
-            console.log(list);
+            io.emit('LIST-USER-ONLINE', {list});
         })
     }
 
