@@ -14,10 +14,11 @@ class ControllerSocket {
         })
     }
 
-    async adminOffline(socket) {
+    async adminOffline(socket, io) {
         socket.on("ADMIN-SIGNOUT", async(data) => {
             let { email } = data;
-            await ServiceCustomerCare.unactiveUser({userEmail: email});
+            let list = await ServiceCustomerCare.unactiveUser({userEmail: email});
+            io.emit('LIST-USER-ONLINE', {list});
         })
     }
 }
