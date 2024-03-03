@@ -61,6 +61,20 @@ class ServiceCustomerCare {
         ])
         .lean();
     }
+
+    async saveMessageClient(infor={}) {
+        let userInfor = await ModelCustomerCare.findOne({email: {$eq: infor.userEmail}});
+        if(userInfor) {
+            let payload = {
+                content: infor.message,
+            }
+
+            userInfor.message.push(payload);
+            await userInfor.save();
+        }
+
+        return await ModelCustomerCare.findOne({email: {$eq: infor.userEmail}});
+    }
 }
 
 module.exports = new ServiceCustomerCare();
