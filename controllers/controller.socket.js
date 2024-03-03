@@ -44,6 +44,15 @@ class ControllerSocket {
             io.emit('LIST-USER-ONLINE', {list});
         })
     }
+
+    async adminChooseClientSupport(socket, io) {
+        socket.on("ADMIN-CHOOSE-CLIENT-SUPPORT", async (data) => {
+            let { id: adminId, email: clientEmail } = data;
+            let infor = await ServiceCustomerCare.adminChooseClientSupport({adminId, clientEmail });
+
+            socket.emit('CLIENT-ADMIN-CHOOSE', {client: infor.client});
+        })
+    }
 }
 
 module.exports = new ControllerSocket();

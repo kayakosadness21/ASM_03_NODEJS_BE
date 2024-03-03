@@ -18,7 +18,7 @@ const handleAdminLogin = async(req, res, next) => {
         return res.status(420).json({message: "User is not existed"});
     }
 
-    if(user.role.title !== 'Admin' && user.role.title !== 'Counselor') {
+    if(user?.role.title !== 'Admin' && user?.role.title !== 'Counselor') {
       return res.status(404).json({ message: "This account is invalid" });
     }
 
