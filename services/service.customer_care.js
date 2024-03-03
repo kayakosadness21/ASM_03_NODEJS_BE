@@ -48,6 +48,18 @@ class ServiceCustomerCare {
             userInfor.current_care = "";
             await userInfor.save();
         }
+
+        return await ModelCustomerCare
+        .find({status: {$eq: true}})
+        .populate([
+            {
+                path: 'user',
+                populate: [{
+                    path: 'role'
+                }]
+            }
+        ])
+        .lean();
     }
 }
 
