@@ -18,6 +18,8 @@ const routerCart = require("./routers/router.cart");
 const roleRouter = require("./routers/router.role");
 const cloudinary = require("./utils/util.cloudinary");
 
+const ControllerSocket = require("./controllers/controller.socket");
+
 const PORT = process.env.PORT;
 const URL = process.env.MONGO_URI;
 
@@ -48,9 +50,13 @@ mongoose.connect(URL).then(() => {
   });
   const io = require("./socket").init(server);
 
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
     // status connection
     console.log("client connected under socketId: ", socket.id);
+
+    // ADMIN
+    await ControllerSocket.adminOnline(socket);
+    await ControllerSocket.adminOffline(socket);
 
     // Listen DISCONNECT from client
     socket.on("disconnect", async (data) => {
