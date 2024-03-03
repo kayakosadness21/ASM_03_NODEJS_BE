@@ -54,6 +54,11 @@ mongoose.connect(URL).then(() => {
     // status connection
     console.log("client connected under socketId: ", socket.id);
 
+    // CLIENT
+    await ControllerSocket.clientOnline(socket, io);
+    await ControllerSocket.clientOffline(socket, io);
+    await ControllerSocket.clientSendMessage(socket, io);
+
     // ADMIN
     await ControllerSocket.adminOnline(socket, io);
     await ControllerSocket.adminOffline(socket, io);

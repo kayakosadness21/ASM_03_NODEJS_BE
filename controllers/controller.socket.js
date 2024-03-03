@@ -5,6 +5,29 @@ class ControllerSocket {
 
     constructor() { }
 
+    async clientOnline(socket, io) {
+        socket.on("CLIENT-SIGNIN", async(data) => {
+            let { id, email } = data;
+            let list = await ServiceCustomerCare.activeUser({userId: id, userEmail: email, socketId: socket.id})
+            io.emit('LIST-USER-ONLINE', {list});
+        })
+    }
+
+    async clientOffline(socket, io) {
+        socket.on("CLIENT-SIGNOUT", async(data) => {
+            let { email } = data;
+            let list = await ServiceCustomerCare.unactiveUser({userEmail: email});
+            io.emit('LIST-USER-ONLINE', {list});
+        })
+    }
+
+    async clientSendMessage(socket, io) {
+        socket.on("CLIENT-SEND-MESSAGE", async(data) => {
+            let { email, message } = data;
+            let clientInfor = await ServiceCustomerCare.saveMessageClient({userEmail: email, message});
+            socket.emit("MESSAGE-OF-CLIENT-SEND", {clientInfor});
+        })
+    }
 
     async adminOnline(socket, io) {
         socket.on('ADMIN-SIGNIN', async(data) => {
