@@ -62,6 +62,7 @@ mongoose.connect(URL).then(() => {
     // ADMIN
     await ControllerSocket.adminOnline(socket, io);
     await ControllerSocket.adminOffline(socket, io);
+    await ControllerSocket.adminChooseClientSupport(socket, io);
 
     // Listen DISCONNECT from client
     socket.on("disconnect", async (data) => {

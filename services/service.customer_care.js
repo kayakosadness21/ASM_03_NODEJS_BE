@@ -6,6 +6,14 @@ class ServiceCustomerCare {
     
     constructor() { }
 
+    async findAdminById(id) {
+        return await ModelCustomerCare.findOne({user: {$eq: id}});
+    }
+
+    async findClientByEmail(email) {
+        return await ModelCustomerCare.findOne({email: {$eq: email}});
+    }
+
     async activeUser(infor = {}) {
         let userInfor = await ModelCustomerCare.findOne({email: {$eq: infor.userEmail}});
         if(!userInfor) {
@@ -74,6 +82,21 @@ class ServiceCustomerCare {
         }
 
         return await ModelCustomerCare.findOne({email: {$eq: infor.userEmail}});
+    }
+
+    async adminChooseClientSupport(infor={}) {
+        let adminSupport = await this.findAdminById(infor.adminId);
+        let clientNeedSupport = await this.findClientByEmail(infor.clientEmail);
+
+        adminSupport.current_care = infor.clientEmail;
+        if(adminSupport?.email) {
+            clientNeedSupport.current_care = adminSupport?.email;
+        }
+
+        await adminSupport.save();
+        await clientNeedSupport.save();
+
+        return {admin: adminSupport, client: clientNeedSupport};
     }
 }
 
