@@ -104,6 +104,18 @@ class ServiceCustomerCare {
 
         return {admin: adminSupport, client: clientNeedSupport};
     }
+
+    async saveMessageAdminSendToClient(infor={}) {
+        let client = await this.findClientByEmail(infor.client.email);
+        let payload = {
+            content: infor.message,
+            type: "Admin"
+        }
+
+        client.message.push(payload);
+        await client.save();
+        return await this.findClientByEmail(infor.client.email);
+    }
 }
 
 module.exports = new ServiceCustomerCare();
