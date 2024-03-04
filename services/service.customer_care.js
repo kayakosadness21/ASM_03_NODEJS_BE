@@ -6,6 +6,20 @@ class ServiceCustomerCare {
     
     constructor() { }
 
+    async getListUserOnline() {
+        return await ModelCustomerCare
+        .find({status: {$eq: true}})
+        .populate([
+            {
+                path: 'user',
+                populate: [{
+                    path: 'role'
+                }]
+            }
+        ])
+        .lean();
+    }
+
     async findAdminById(id) {
         return await ModelCustomerCare.findOne({user: {$eq: id}});
     }
@@ -15,6 +29,10 @@ class ServiceCustomerCare {
     }
 
     async findClientByEmail(email) {
+        return await ModelCustomerCare.findOne({email: {$eq: email}});
+    }
+
+    async findUserCareByEmail(email = "") {
         return await ModelCustomerCare.findOne({email: {$eq: email}});
     }
 
@@ -53,6 +71,13 @@ class ServiceCustomerCare {
 
     async unactiveUser(infor={}) {
         let userInfor = await ModelCustomerCare.findOne({email: {$eq: infor.userEmail}});
+
+        if(userInfor.current_care) {
+            let userCare = await this.findUserCareByEmail(userInfor.current_care);
+            userCare.current_care = ''
+            await userCare.save();
+        }
+
         if(userInfor) {
             userInfor.status = false;
             userInfor.socket_id = ''
