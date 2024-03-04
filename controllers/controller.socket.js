@@ -57,6 +57,14 @@ class ControllerSocket {
             socket.emit('CLIENT-ADMIN-CHOOSE', {client: infor.client});
         })
     }
+
+    async adminSendMessage(socket, io) {
+        socket.on("ADMIN-SEND-MESSAGE-TO-CLIENT", async(data) => {
+            let client = await ServiceCustomerCare.saveMessageAdminSendToClient({client: data.client, message: data.message});
+            socket.emit("ADMIN-SEND-MESSAGE-TO-CLIENT-DONE", {client});
+            socket.broadcast.emit("CLIENT-RECIVE-MESSAGE-FROMADMIN-SUPPORT", {client});
+        })
+    }
 }
 
 module.exports = new ControllerSocket();

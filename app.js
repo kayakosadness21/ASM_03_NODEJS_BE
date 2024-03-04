@@ -63,65 +63,69 @@ mongoose.connect(URL).then(() => {
     await ControllerSocket.adminOnline(socket, io);
     await ControllerSocket.adminOffline(socket, io);
     await ControllerSocket.adminChooseClientSupport(socket, io);
+    await ControllerSocket.adminSendMessage(socket, io);
 
     // Listen DISCONNECT from client
-    socket.on("disconnect", async (data) => {
-      console.log("A client disconnect: ", socket.id);
-      // update action to chat
-      try {
-        // find socket.id. if have, that is socket.id from client custommer else from client admin
-        const findIndex = await Chat.findOne({ socketId: socket.id });
-        if (findIndex) {
-          await Chat.updateOne({ socketId: socket.id }, { action: "OFFLINE" });
-          io.emit("ADMIN_CHANNEL", { action: "OFFLINE", socketId: socket.id });
-        }
-      } catch (error) {
-        console.log("Error when disconnect: ", error);
-      }
-    });
+    // socket.on("disconnect", async (data) => {
+    //   console.log("A client disconnect: ", socket.id);
+    //   // update action to chat
+    //   try {
+    //     // find socket.id. if have, that is socket.id from client custommer else from client admin
+    //     const findIndex = await Chat.findOne({ socketId: socket.id });
+    //     if (findIndex) {
+    //       await Chat.updateOne({ socketId: socket.id }, { action: "OFFLINE" });
+    //       io.emit("ADMIN_CHANNEL", { action: "OFFLINE", socketId: socket.id });
+    //     }
+    //   } catch (error) {
+    //     console.log("Error when disconnect: ", error);
+    //   }
+    // });
+
     // listen from client
-    socket.on("ONLINE_OFFLINE", async (data) => {
-      console.log("CEHCKE DATA ONOFF: ", data);
-      try {
-        const findChatRoom = await Chat.findById(data.roomId);
-        // update socketId to chat
-        if (findChatRoom) {
-          await Chat.updateOne(
-            { _id: data.roomId },
-            { action: data.action, socketId: socket.id }
-          );
-        } else {
-          const chat = await Chat.create({
-            member: ["admin", "client"],
-            total_message: 0,
-            conversation: [],
-            action: "ONLINE",
-            socketId: socket.id,
-          });
-          await chat.save();
-        }
-        // emit to Admin
-        io.emit("ADMIN_CHANNEL", { ...data, socketId: socket.id });
-      } catch (error) {
-        console.log("Error when connected: ", error);
-      }
-    });
+    // socket.on("ONLINE_OFFLINE", async (data) => {
+    //   console.log("CEHCKE DATA ONOFF: ", data);
+    //   try {
+    //     const findChatRoom = await Chat.findById(data.roomId);
+    //     // update socketId to chat
+    //     if (findChatRoom) {
+    //       await Chat.updateOne(
+    //         { _id: data.roomId },
+    //         { action: data.action, socketId: socket.id }
+    //       );
+    //     } else {
+    //       const chat = await Chat.create({
+    //         member: ["admin", "client"],
+    //         total_message: 0,
+    //         conversation: [],
+    //         action: "ONLINE",
+    //         socketId: socket.id,
+    //       });
+    //       await chat.save();
+    //     }
+    //     // emit to Admin
+    //     io.emit("ADMIN_CHANNEL", { ...data, socketId: socket.id });
+    //   } catch (error) {
+    //     console.log("Error when connected: ", error);
+    //   }
+    // });
+
     // listen at TYPING channel from client & admin
-    socket.on("TYPING", (data) => {
-      // emit to client
-      if (data.userId !== "client") {
-        if (data.action === "START_TYPING") {
-          io.emit(data.roomId, { action: "START_TYPING" });
-        } else {
-          io.emit(data.roomId, { action: "STOP_TYPING" });
-        }
-        return;
-      }
-      // emit to admin
-      if (data.userId === "client") {
-        io.emit("ADMIN_CHANNEL", { ...data });
-        return;
-      }
-    });
+    // socket.on("TYPING", (data) => {
+    //   // emit to client
+    //   if (data.userId !== "client") {
+    //     if (data.action === "START_TYPING") {
+    //       io.emit(data.roomId, { action: "START_TYPING" });
+    //     } else {
+    //       io.emit(data.roomId, { action: "STOP_TYPING" });
+    //     }
+    //     return;
+    //   }
+    //   // emit to admin
+    //   if (data.userId === "client") {
+    //     io.emit("ADMIN_CHANNEL", { ...data });
+    //     return;
+    //   }
+    // });
+
   });
 });
