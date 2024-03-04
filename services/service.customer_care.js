@@ -10,6 +10,10 @@ class ServiceCustomerCare {
         return await ModelCustomerCare.findOne({user: {$eq: id}});
     }
 
+    async findAdminByEmail(email) {
+        return await ModelCustomerCare.findOne({email: {$eq: email}});
+    }
+
     async findClientByEmail(email) {
         return await ModelCustomerCare.findOne({email: {$eq: email}});
     }
@@ -81,7 +85,9 @@ class ServiceCustomerCare {
             await userInfor.save();
         }
 
-        return await ModelCustomerCare.findOne({email: {$eq: infor.userEmail}});
+        let user = await ModelCustomerCare.findOne({email: {$eq: infor.userEmail}});
+        let admin = user.current_care? await this.findAdminByEmail(user.current_care) : null;
+        return {user, admin};
     }
 
     async adminChooseClientSupport(infor={}) {
@@ -90,7 +96,7 @@ class ServiceCustomerCare {
 
         adminSupport.current_care = infor.clientEmail;
         if(adminSupport?.email) {
-            clientNeedSupport.current_care = adminSupport?.email;
+            clientNeedSupport.current_care = adminSupport?.email??'Test@gmail.com';
         }
 
         await adminSupport.save();

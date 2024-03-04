@@ -24,8 +24,12 @@ class ControllerSocket {
     async clientSendMessage(socket, io) {
         socket.on("CLIENT-SEND-MESSAGE", async(data) => {
             let { email, message } = data;
-            let clientInfor = await ServiceCustomerCare.saveMessageClient({userEmail: email, message});
-            socket.emit("MESSAGE-OF-CLIENT-SEND", {clientInfor});
+            let {user, admin } = await ServiceCustomerCare.saveMessageClient({userEmail: email, message});
+            socket.emit("MESSAGE-OF-CLIENT-SEND", {user});
+
+            if(admin) {
+                socket.broadcast.emit("CLIENT-SEND-MESSAGE-TO-ADMIN-SUPPORT", {user});
+            }
         })
     }
 
