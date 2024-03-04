@@ -5,6 +5,7 @@ class ControllerSocket {
 
     constructor() { }
 
+    // CLIENT ONLINE SIGNIN CHAT
     async clientOnline(socket, io) {
         socket.on("CLIENT-SIGNIN", async(data) => {
             let { id, email } = data;
@@ -13,6 +14,8 @@ class ControllerSocket {
         })
     }
 
+
+    // CLIENT OFFLINE SIGNOUT CHAT
     async clientOffline(socket, io) {
         socket.on("CLIENT-SIGNOUT", async(data) => {
             let { email } = data;
@@ -21,6 +24,8 @@ class ControllerSocket {
         })
     }
 
+
+    // CLIENT SEND MESSAGE TO ADMIN WAIT SUPPORT
     async clientSendMessage(socket, io) {
         socket.on("CLIENT-SEND-MESSAGE", async(data) => {
             let { email, message } = data;
@@ -33,6 +38,8 @@ class ControllerSocket {
         })
     }
 
+
+    // ADMIN ONLINE SIGNIN CHAT
     async adminOnline(socket, io) {
         socket.on('ADMIN-SIGNIN', async(data) => {
             let { id, email } = data;
@@ -41,6 +48,8 @@ class ControllerSocket {
         })
     }
 
+
+    // ADMIN OFFLINE SIGNOUT CHAT
     async adminOffline(socket, io) {
         socket.on("ADMIN-SIGNOUT", async(data) => {
             let { email } = data;
@@ -49,15 +58,18 @@ class ControllerSocket {
         })
     }
 
+
+    // ADMIN CHOOSE CLIENT SUPPORT
     async adminChooseClientSupport(socket, io) {
         socket.on("ADMIN-CHOOSE-CLIENT-SUPPORT", async (data) => {
             let { id: adminId, email: clientEmail } = data;
             let infor = await ServiceCustomerCare.adminChooseClientSupport({adminId, clientEmail });
-
-            socket.emit('CLIENT-ADMIN-CHOOSE', {client: infor.client});
+            let list = await ServiceCustomerCare.getListUserOnline()
+            socket.emit('CLIENT-ADMIN-CHOOSE', {client: infor.client, list});
         })
     }
 
+    // ADMIN SEND MESSAGE TO CLIENT
     async adminSendMessage(socket, io) {
         socket.on("ADMIN-SEND-MESSAGE-TO-CLIENT", async(data) => {
             let client = await ServiceCustomerCare.saveMessageAdminSendToClient({client: data.client, message: data.message});
