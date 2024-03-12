@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const ServiceUser = require("../services/service.user");
 const UtilBcrypt = require("../utils/util.bcrypt");
-
+// TIêu chí số 9: phân quyền cho người dùng thành 3 dạng
 const handleAdminLogin = async(req, res, next) => {
   try {
     const { email, password } = req.body;

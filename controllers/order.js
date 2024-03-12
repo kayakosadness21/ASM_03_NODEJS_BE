@@ -5,7 +5,7 @@ const User = require("../models/user");
 const io = require("../socket");
 const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
-
+// TIêu chí số 7: Gửi email xác nhận khi đặt đơn hàng
 const addNewOrder = async (req, res) => {
   try {
     const { user, cart } = req.body;
@@ -83,7 +83,7 @@ const addNewOrder = async (req, res) => {
     );
     transporter.sendMail({
       to: user.email,
-      from: "tuanlhFX17756@funix.edu.vn",
+      from: "quandang2104@gmail.com",
       subject: "Order Confirmation ",
       html: `
           <h2 style="${textAlignStyle}">Xin chào user ${user.fullName}</h2>
@@ -104,7 +104,7 @@ const addNewOrder = async (req, res) => {
         +totalPrice
       )} VND</h2>
           <h2 style="${textAlignStyle}">Cảm ơn bạn!</h2>
-      `,
+      `,// Nâng cao số 5: - Thêm trường số lượng sản phẩm vào DBI. Mỗi khi user đặt thì re-update trường này.
     });
     // emit to client
     // io.getIO().emit("posts_quantity_product",{

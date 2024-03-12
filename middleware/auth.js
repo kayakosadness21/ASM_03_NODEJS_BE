@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 // Tiêu chí số 9: Phân quyền cho các người dùng thành ba dạng: Customer, Admin & Consultant
+// Token login sao cho đúng
 const verifyToken = (req, res, next) => {
   const token =
     req.body.token || req.query.token || req.headers["authorization"];

@@ -9,8 +9,8 @@ const uploadMultipleImageFiles = require("../utils/uploadImages");
 // const Product = require("../models/product");
 const ControllerProduct = require("../controllers/controller.product");
 
-router.get("/:id", ControllerProduct.getProductById);
 router.get("/get-all-products", productController.getAllProducts);
+router.get("/:id", ControllerProduct.getProductById);
 router.get("/", ControllerProduct.getAllProduct);
 
 router.post("/destroy", auth, ControllerProduct.destroyProduct);
