@@ -27,6 +27,7 @@ const userSchema = Schema({
   isCounselor: {
     type: Boolean,
   },
+  // truong admin, counselor theo model User
   token: {
     type: String,
   },

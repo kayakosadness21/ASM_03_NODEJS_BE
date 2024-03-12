@@ -15,7 +15,7 @@ class UtilMailer {
         var mailOption = {
             from: 'quandang2104@gmail.com',
             to: email,
-            subject: 'ECOMMER TRANSACTION',
+            subject: 'GD WEB BÁN HÀNG',
             html: template
         }
 

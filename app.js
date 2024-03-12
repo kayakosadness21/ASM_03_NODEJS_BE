@@ -32,14 +32,16 @@ app.use(cors());
 
 app.use(express.static(path.join(__dirname, "./public")));
 
-app.use(multer({storage:cloudinary.storage}).any('photos'));
+app.use(multer({ storage: cloudinary.storage }).any('photos'));
+
+app.use("/product", productRouter);
 
 // Assign routers
 app.use(verifyRouter);
 app.use("/order", orderRouter);
 app.use("/role", roleRouter);
 app.use("/user", userRouter);
-app.use("/product", productRouter);
+// app.use("/product", productRouter);
 app.use("/chat", chatRouter);
 app.use("/admin", adminRouter);
 app.use("/cart", routerCart);

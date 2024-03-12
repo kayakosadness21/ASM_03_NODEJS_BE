@@ -25,7 +25,7 @@ class ControllerCart {
 
 
     async confirmAddCart(req, res, next) {
-        await UtilMailer.send("quandhFX17216@funix.edu.vn", `<h1 style="color: red;">Hello add cart success</h1>`,() => {
+        await UtilMailer.send("quandhFX17216@funix.edu.vn", `<h1 style="color: powderblue;">Successfully cart added</h1>`,() => {
             next();
         })
     }

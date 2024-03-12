@@ -130,9 +130,9 @@ const handleUserSignUp = async (req, res, next) => {
     }
     // Mã hóa mk bằng chuỗi: Encrypt user password
     encryptedPassword = await bcrypt.hash(password, 10);
-
+// Tiêu chí số 9: vừa phân quyền kết hợp xác thực
     let { role } = await ServiceRole.findRoleByName('Client');
-    // create user
+    // create user, căn cứ theo trường 10.3.24
     const user = new User({
       email: email,
       password: encryptedPassword,
@@ -140,7 +140,7 @@ const handleUserSignUp = async (req, res, next) => {
       phoneNumber: phoneNumber,
       address: null,
       isAdmin: false,
-      isCounselor: false,
+      isCounselor: false,// một trường ở Model User là role và sẽ lưu role của người dùng
       token: null,
       role
     });
